@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import JSON from './Apprentice_TandemFor400_Data.json';
-import Answer from './Answer'
+import Answer from './Answer';
 
 export default class Game extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     const questions = this.shuffle(JSON).slice(0,10);
     const currentQ = questions.pop();
     this.state = {
       questions,
       currentQ,
-      answered: false,
-      score: 0
     };
     this.checkAnswer = this.checkAnswer.bind(this);
   }
@@ -33,18 +31,24 @@ export default class Game extends Component {
   }
   
   checkAnswer(e) {
-    const ele = document.getElementsByClassName(e.target.innerHTML)[0];
-    // const answerTimer = setTimeout((ele, color) => ele.classname = color, 500);
-    if (this.state.currentQ.correct === ele.innerHTML) {
-      this.setState({ score: this.state.score + 1 });
+    const { currentQ } = this.state;
+    if (currentQ.correct === e.target.innerHTML) {
+      this.props.increaseScore();
     } else {
-      // highlight clicked answer red
+      const ele = document.getElementsByClassName(e.target.innerHTML)[0];
+      ele.classList.add('red');
     }
-    // either way, highlight correct answer green
-    this.setState({ answered: true });
-
-    // set timeout
-      // progress to next question, set answered to false
+    const correct = document.getElementsByClassName(currentQ.correct)[0];
+    correct.classList.add('green');
+    
+    const that = this;
+    setTimeout(function() {
+        if (that.state.questions.length === 0) {
+          that.props.clickPlay();
+        } else {
+          that.nextQuestion();
+        }
+    }, 2000);
   }
 
   render() {
