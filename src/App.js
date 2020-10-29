@@ -1,21 +1,18 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import Game from './Game';
 import StartScreen from './StartScreen';
-import EndScreen from './EndScreen';
 
 // randomize answer order
 // style it
-// screen for showing answers
 // screen for 10/10
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      playing: null,
+      playing: false,
       score: 0,
     };
     this.clickPlay = this.clickPlay.bind(this);
@@ -24,8 +21,7 @@ class App extends React.Component {
 
   clickPlay() {
     const { playing } = this.state;
-    // 
-    playing !== true ? this.setState({ playing: true, score: 0 }) : this.setState({ playing: false });
+    this.setState({ playing: !playing, score: 0 });
   }
 
   increaseScore() {
@@ -35,17 +31,13 @@ class App extends React.Component {
   render() {
     const { playing } = this.state;
     let load;
-    if (playing === null) {
+    if (!playing) {
       load = <StartScreen clickPlay={this.clickPlay}/>
     } else if (playing === true) {
       load = <Game 
               increaseScore={this.increaseScore}
               clickPlay={this.clickPlay}
               score={this.state.score}
-              />
-    } else {
-      load = <EndScreen score={this.state.score}
-              clickPlay={this.clickPlay}
               />
     }
 
