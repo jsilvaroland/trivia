@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import JSON from './Apprentice_TandemFor400_Data.json';
 import Answer from './Answer';
 import EndScreen from './EndScreen';
+import { throttle } from './util';
 
 export default class Game extends Component {
   constructor(props) {
@@ -11,24 +12,27 @@ export default class Game extends Component {
     this.state = {
       questions,
       currentQ,
+      answers: this.shuffle(currentQ.incorrect.concat(currentQ.correct)),
       response: '',
       answered: false,
       end: false,
     };
-    this.checkAnswer = this.checkAnswer.bind(this);
+    this.checkAnswer = throttle(this.checkAnswer.bind(this), 2000);
   }
 
   reset() {
     const questions = this.shuffle(JSON).slice(0,10);
     const currentQ = questions.pop();
-    this.setState({ questions, currentQ, response: '', answered: false });
+    this.setState({ questions, currentQ, response: '', answered: false, end: false });
   }
 
   nextQuestion() {
+
     const currentQ = this.state.questions[0];
     const questions = this.state.questions.slice(1);
+    const answers = this.shuffle(currentQ.incorrect.concat(currentQ.correct));
     this.setState({ 
-      currentQ, questions
+      currentQ, questions, answers
     });
   }
 
@@ -69,8 +73,6 @@ export default class Game extends Component {
   }
 
   render() {
-    const answers = this.state.currentQ.incorrect.concat(this.state.currentQ.correct);
-    console.log(this.state);
     if (this.state.end) {
       return (
         <EndScreen 
@@ -84,7 +86,7 @@ export default class Game extends Component {
           <h1>Question #{10 - this.state.questions.length}</h1>
           <p>{this.state.currentQ.question}</p>
             {
-              answers.map(answer => (
+              this.state.answers.map(answer => (
                 <Answer
                   key={answer}
                   answer={answer}

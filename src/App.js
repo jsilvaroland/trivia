@@ -6,6 +6,7 @@ import StartScreen from './StartScreen';
 
 // randomize answer order
 // style it
+// fix so can't click over and over
 // screen for 10/10
 
 class App extends React.Component {
